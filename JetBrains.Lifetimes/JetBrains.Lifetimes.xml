@@ -2126,7 +2126,7 @@
             Recursive name. For constructs like Aaaa.Bbb::CCC
             </summary>
         </member>
-        <member name="M:JetBrains.Diagnostics.RName.Sub(System.Object,System.String)">
+        <member name="M:JetBrains.Diagnostics.RName.Sub(System.String,System.String)">
             <summary>
             Separator doesn't count if localName is empty or parent is empty.
             </summary>
@@ -2919,11 +2919,6 @@
             You can terminate this definition by <see cref="M:JetBrains.Lifetimes.LifetimeDefinition.Terminate"/> method (or <see cref="M:JetBrains.Lifetimes.LifetimeDefinition.Dispose"/> which is the same). 
             </summary>
         </member>
-        <member name="P:JetBrains.Lifetimes.LifetimeDefinition.ExecutionWasNotCancelledByTimeout">
-            <summary>
-            Use this signal to improve diagnostics (e.g., to collect thread dumps etc.)) 
-            </summary>
-        </member>
         <member name="T:JetBrains.Lifetimes.LifetimeDefinition.AllowTerminationUnderExecutionCookie">
             <summary>
             Use this cookie only by <see cref="M:JetBrains.Lifetimes.Lifetime.UsingAllowTerminationUnderExecution"/>
@@ -3055,6 +3050,11 @@
             Adds finalizer that logs error (via <see cref="!:Log.Error"/>) if this definition is garbage collected without being terminated.  
             </summary>
             <param name="comment"></param>
+        </member>
+        <member name="P:JetBrains.Lifetimes.LifetimeDefinition.AdditionalDiagnosticsInfo.GetAdditionalDiagnosticsIfExecutionWasNotCancelledByTimeoutAsync">
+            <summary>
+            Set this property to provide additional diagnostic for exception: `ExecuteIfAlive after termination of {myDef} took too much time (>{terminationTimeoutMs}ms)`
+            </summary>
         </member>
         <member name="M:JetBrains.Lifetimes.LifetimeDefinition.SynchronizeWith``1(System.Threading.Tasks.TaskCompletionSource{``0})">
             <summary>
