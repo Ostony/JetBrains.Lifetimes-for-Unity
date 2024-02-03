@@ -1,0 +1,10 @@
+{
+  "name": "com.jetbrains.lifetimes",
+  "displayName": "JetBrains.Lifetimes",
+  "version": "2023.2.3",
+  "description": "https://www.nuget.org/packages/JetBrains.Lifetimes/",
+  "unity": "2021.1",
+  "author": "jetbrains",
+  "dependencies": {},
+  "type": "library"
+}
