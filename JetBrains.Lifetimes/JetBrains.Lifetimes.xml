@@ -3223,16 +3223,14 @@
             <returns></returns>
         </member>
         <member name="T:JetBrains.Serialization.UnsafeWriter">
-             <summary>
-             Effective serialization tool. <see cref="T:JetBrains.Serialization.UnsafeWriter"/> is thread-bound automatically expandable and shrinkable
-             byte buffer (with initial size of 1Mb). Entry point is <see cref="T:JetBrains.Serialization.UnsafeWriter.Cookie"/> obtained by  <see cref="M:JetBrains.Serialization.UnsafeWriter.NewThreadLocalWriter"/>.
-             It is <see cref="T:System.IDisposable"/> so must be used only with (possibly nested) <c>using</c> in stack-like way.
-             <see cref="T:JetBrains.Serialization.UnsafeWriter.Cookie"/> contains start position and length of currently serialized data (start + len = position), so when disposed it reverts writer
-             position to the cookie's start position.
-            
-            
-             <seealso cref="T:JetBrains.Serialization.UnsafeReader"/>
-             </summary>
+            <summary>
+            Effective serialization tool. <see cref="T:JetBrains.Serialization.UnsafeWriter"/> is thread-bound automatically expandable and shrinkable
+            byte buffer (with initial size of 1Mb). Entry point is <see cref="T:JetBrains.Serialization.UnsafeWriter.Cookie"/> obtained by  <see cref="M:JetBrains.Serialization.UnsafeWriter.NewThreadLocalWriter"/>.
+            It is <see cref="T:System.IDisposable"/> so must be used only with (possibly nested) <c>using</c> in stack-like way.
+            <see cref="T:JetBrains.Serialization.UnsafeWriter.Cookie"/> contains start position and length of currently serialized data (start + len = position), so when disposed it reverts writer
+            position to the cookie's start position.
+            <seealso cref="T:JetBrains.Serialization.UnsafeReader"/>
+            </summary>
         </member>
         <member name="T:JetBrains.Serialization.UnsafeWriter.Bookmark">
             <summary>
@@ -3243,7 +3241,8 @@
         </member>
         <member name="M:JetBrains.Serialization.UnsafeWriter.Bookmark.WriteIntLength">
             <summary>
-            Writes `<see cref="P:JetBrains.Serialization.UnsafeWriter.Count"/><c> - sizeof(int)</c>` into the <see cref="P:JetBrains.Serialization.UnsafeWriter.Bookmark.Data"/> pointer. Cookie must be prepared by invoking `<see cref="M:JetBrains.Serialization.UnsafeWriter.Write(System.Int32)"/><c>(0)</c>` as first cookie call.
+            Writes `<see cref="P:JetBrains.Serialization.UnsafeWriter.Count"/><c> - sizeof(int)</c>` into the <see cref="P:JetBrains.Serialization.UnsafeWriter.Bookmark.Data"/> pointer.
+            Cookie must be prepared by invoking `<see cref="M:JetBrains.Serialization.UnsafeWriter.WriteInt32(System.Int32)"/><c>(0)</c>` as first cookie call.
             </summary>
         </member>
         <member name="P:JetBrains.Serialization.UnsafeWriter.AllowUnsafeWriterCaching">
@@ -3274,17 +3273,13 @@
         </member>
         <member name="M:JetBrains.Serialization.UnsafeWriter.WriteStringContent(System.String)">
             <summary>
-            Doesn't write length prefix, only string contents. If value == null, does nothing.
+            Doesn't write length prefix, only string contents. If <paramref name="value"/> is <c>value</c>, does nothing.
             </summary>
-            <param name="value"></param>
         </member>
         <member name="M:JetBrains.Serialization.UnsafeWriter.WriteStringContent(System.String,System.Int32,System.Int32)">
             <summary>
-            Doesn't write length prefix, only string contents. If value == null, does nothing.
+            Doesn't write length prefix, only string contents. If <paramref name="value"/> is <c>value</c>, does nothing.
             </summary>
-            <param name="value"></param>
-            <param name="offset"></param>
-            <param name="count"></param>
         </member>
         <member name="M:JetBrains.Serialization.UnsafeWriter.MakeBookmark">
             <summary>
