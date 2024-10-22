@@ -397,10 +397,36 @@
         </member>
         <member name="T:JetBrains.Annotations.InstantHandleAttribute">
             <summary>
-            Tells code analysis engine if the parameter is completely handled when the invoked method is on stack.
-            If the parameter is a delegate, indicates that delegate is executed while the method is executed.
+            Tells the code analysis engine if the parameter is completely handled when the invoked method is on stack.
+            If the parameter is a delegate, indicates that the delegate can only be invoked during method execution
+            (the delegate can be invoked zero or multiple times, but not stored to some field and invoked later,
+            when the containing method is no longer on the execution stack).
             If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
+            If <see cref="P:JetBrains.Annotations.InstantHandleAttribute.RequireAwait"/> is true, the attribute will only take effect
+            if the method invocation is located under the <c>await</c> expression.
             </summary>
+        </member>
+        <member name="P:JetBrains.Annotations.InstantHandleAttribute.RequireAwait">
+            <summary>
+            Requires the method invocation to be used under the <c>await</c> expression for this attribute to take effect.
+            Can be used for delegate/enumerable parameters of <c>async</c> methods.
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.RequireStaticDelegateAttribute">
+            <summary>
+            This annotation allows enforcing allocation-less usage patterns of delegates for performance-critical APIs.
+            When this annotation is applied to the parameter of a delegate type,
+            the IDE checks the input argument of this parameter:
+            * When a lambda expression or anonymous method is passed as an argument, the IDE verifies that the passed closure
+              has no captures of the containing local variables and the compiler is able to cache the delegate instance
+              to avoid heap allocations. Otherwise, a warning is produced.
+            * The IDE warns when the method name or local function name is passed as an argument because this always results
+              in heap allocation of the delegate instance.
+            </summary>
+            <remarks>
+            In C# 9.0+ code, the IDE will also suggest annotating the anonymous functions with the <c>static</c> modifier
+            to make use of the similar analysis provided by the language/compiler.
+            </remarks>
         </member>
         <member name="T:JetBrains.Annotations.PureAttribute">
             <summary>
@@ -3441,60 +3467,85 @@
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil(System.Func{System.Boolean})">
             <summary>
-            Spins while <paramref name="condition"/> is false.     
+            Spins while <paramref name="condition"/> is false.
             </summary>
             <param name="condition">Stops spinning when condition is true</param>
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil(JetBrains.Lifetimes.Lifetime,System.Func{System.Boolean})">
             <summary>
-            Spins while <paramref name="lifetime"/> is alive and <paramref name="condition"/> is false.     
+            Spins while <paramref name="lifetime"/> is alive and <paramref name="condition"/> is false.
             </summary>
             <param name="lifetime">Stops spinning and return <c>false</c> when lifetime is no more alive</param>
             <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
-            <returns><c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning.
-            Otherwise <c>true</c> (when <paramref name="condition"/> returns true)</returns>
+            <returns>
+            <c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning.
+            Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil(System.TimeSpan,System.Func{System.Boolean})">
             <summary>
-            Spins while <paramref name="timeout"/> is not elapsed and <paramref name="condition"/> is false.     
+            Spins while <paramref name="timeout"/> is not elapsed and <paramref name="condition"/> is false.
             </summary>
             <param name="timeout">Stops spinning and return <c>false</c> when timeout is alive</param>
             <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
-            <returns><c>false</c> if <paramref name="timeout"/> is zero or elapsed during spinning.
-            Otherwise <c>true</c> (when <paramref name="condition"/> returns true)</returns>
+            <returns>
+            <c>false</c> if <paramref name="timeout"/> is zero or elapsed during spinning.
+            Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil(JetBrains.Lifetimes.Lifetime,System.TimeSpan,System.Func{System.Boolean})">
             <summary>
-            Spins while <paramref name="lifetime"/> is alive, <paramref name="timeout"/> is not elapsed and <paramref name="condition"/> is false.     
+            Spins while <paramref name="lifetime"/> is alive, <paramref name="timeout"/> is not elapsed and <paramref name="condition"/> is false.
             </summary>
             <param name="lifetime">Stops spinning and return <c>false</c> when lifetime is no more alive</param>
             <param name="timeout">Stops spinning and return <c>false</c> when timeout is alive</param>
             <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
-            <returns><c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeout"/> is zero or elapsed during spinning.
-            Otherwise <c>true</c> (when <paramref name="condition"/> returns true)</returns>
+            <returns>
+            <c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeout"/> is zero
+            or elapsed during spinning. Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil(JetBrains.Lifetimes.Lifetime,System.Int64,System.Func{System.Boolean})">
             <summary>
-            Spins while <paramref name="lifetime"/> is alive, <paramref name="timeoutMs"/> is not elapsed and <paramref name="condition"/> is false.     
+            Spins while <paramref name="lifetime"/> is alive, <paramref name="timeoutMs"/> is not elapsed and <paramref name="condition"/> is false.
             </summary>
             <param name="lifetime">Stops spinning and return <c>false</c> when lifetime is no more alive</param>
             <param name="timeoutMs">Stops spinning and return <c>false</c> when timeout is alive</param>
             <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
-            <returns><c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeoutMs"/> is zero or elapsed during spinning.
-            Otherwise <c>true</c> (when <paramref name="condition"/> returns true)</returns>    
+            <returns>
+            <c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeoutMs"/> is zero
+            or elapsed during spinning. Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
+        </member>
+        <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntil``1(JetBrains.Lifetimes.Lifetime,System.Int64,``0,System.Func{``0,System.Boolean})">
+            <summary>
+            Spins while <paramref name="lifetime"/> is alive, <paramref name="timeoutMs"/> is not elapsed and <paramref name="condition"/> is false.
+            </summary>
+            <param name="lifetime">Stops spinning and return <c>false</c> when lifetime is no more alive</param>
+            <param name="timeoutMs">Stops spinning and return <c>false</c> when timeout is alive</param>
+            <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
+            <param name="state">State to pass into delegate to avoid closures</param>
+            <returns>
+            <c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeoutMs"/> is zero
+            or elapsed during spinning. Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
         </member>
         <member name="M:JetBrains.Threading.SpinWaitEx.SpinUntilAsync(JetBrains.Lifetimes.Lifetime,System.Int64,System.Int32,System.Func{System.Boolean})">
             <summary>
-            Spins in ASYNC manner (not consuming thread or CPU resources) while <paramref name="lifetime"/> is alive, <paramref name="timeoutMs"/> is not elapsed and <paramref name="condition"/> is false.
-            Sleeps in async fashion (using <see cref="M:System.Threading.Tasks.Task.Delay(System.TimeSpan,System.Threading.CancellationToken)"/> for <paramref name="delayBetweenChecksMs"/> each time between <paramref name="condition"/> check.
-            Only <paramref name="lifetime"/> cancellation could immediately return execution from delay. 
+            Spins in ASYNC manner (not consuming thread or CPU resources) while <paramref name="lifetime"/> is alive,
+            <paramref name="timeoutMs"/> is not elapsed and <paramref name="condition"/> is false.
+            Sleeps in async fashion (using <see cref="M:System.Threading.Tasks.Task.Delay(System.TimeSpan,System.Threading.CancellationToken)"/>
+            for <paramref name="delayBetweenChecksMs"/> each time between <paramref name="condition"/> check.
+            Only <paramref name="lifetime"/> cancellation could immediately return execution from delay.
             </summary>
             <param name="lifetime">Stops spinning and return <c>false</c> when lifetime is no more alive</param>
             <param name="timeoutMs">Stops spinning and return <c>false</c> when timeout is alive</param>
             <param name="delayBetweenChecksMs">Interval to delay</param>
             <param name="condition">Stops spinning and return <c>false</c> when condition is true</param>
-            <returns><c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeoutMs"/> is zero or elapsed during spinning.
-            Otherwise <c>true</c> (when <paramref name="condition"/> returns true)</returns> 
+            <returns>
+            <c>false</c> if <paramref name="lifetime"/> is not alive or canceled during spinning, <paramref name="timeoutMs"/> is zero
+            or elapsed during spinning. Otherwise, <c>true</c> (when <paramref name="condition"/> returns true)
+            </returns>
         </member>
         <member name="M:JetBrains.Threading.TaskEx.NoAwait(System.Threading.Tasks.Task)">
             <summary>
