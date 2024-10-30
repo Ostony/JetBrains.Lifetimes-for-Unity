@@ -1,7 +1,7 @@
 {
   "name": "com.jetbrains.lifetimes",
   "displayName": "JetBrains.Lifetimes",
-  "version": "2024.3.0",
+  "version": "2024.3.1",
   "description": "https://www.nuget.org/packages/JetBrains.Lifetimes/",
   "unity": "2021.2",
   "author": "jetbrains",
